@@ -29,19 +29,18 @@ type PropsType = {
 function App({demo = false}: PropsType) {
     const isLoggedIn = useSelector<AppRootStateType, boolean>(state => state.auth.isLoggedIn)
     const isInitialized = useSelector<AppRootStateType, boolean>(state => state.app.isInitialized)
+    const status = useSelector<AppRootStateType, RequestStatusType>((state) => state.app.status)
 
     const dispatch = useDispatch()
 useEffect(()=>{
     dispatch(initializeAppTC())
 },[])
-    const status = useSelector<AppRootStateType, RequestStatusType>((state) => state.app.status)
     if (!isInitialized) {
         return <div
             style={{position: 'fixed', top: '30%', textAlign: 'center', width: '100%'}}>
             <CircularProgress/>
         </div>
     }
-
 
     return (
         <div className="App">
@@ -60,11 +59,9 @@ useEffect(()=>{
             </AppBar>
             <Container fixed>
 
-                <Switch>
-                    <Route exact path={'/'} render={() => <TodolistsList demo={demo}/>}/>
+                    <Route exact path={'/todolist'} render={() => <TodolistsList demo={demo}/>}/>
                     <Route path={'/login'} render={() => <Login/>}/>
                     {/*<Redirect from={'*'} to={'/404'}/>*/}
-                </Switch>
                 {/*<Route path={'/404'} render={() => <h1>404 page not found</h1>}/>*/}
             </Container>
         </div>

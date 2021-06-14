@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react'
 import {Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, TextField, Button, Grid} from '@material-ui/core'
-import {useFormik} from "formik";
+import {FormikValues, useFormik} from "formik";
 import {useDispatch, useSelector} from "react-redux";
 import {loginTC} from "./auth-reducer";
-import {AppRootStateType} from "../../app/store";
+import {AppDispatchType, AppRootStateType, useAppDispatch} from "../../app/store";
 import {Redirect} from "react-router-dom";
 
 type FormikErrorType = {
@@ -11,12 +11,15 @@ type FormikErrorType = {
     password?: string
     rememberMe?: boolean
 }
-
+type FormikValuesType = {
+    email: string
+    password: string
+    rememberMe: boolean
+}
 export const Login = () => {
 
 
-
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -38,20 +41,29 @@ export const Login = () => {
 
             return errors;
         },
-        onSubmit: values => {
+        onSubmit: async (values: FormikValuesType, formikHelpers) => {
             const email = values.email
             const password = values.password
             const rememberMe = values.rememberMe
-            dispatch(loginTC({email, password, rememberMe}))
+            const action = await dispatch(loginTC({email, password, rememberMe}))
+            if (loginTC.rejected.match(action)) {
+                if (action.payload?.fieldsErrors?.length) {
+                    const error = action.payload?.fieldsErrors[0]
+                    formikHelpers.setFieldError(error.field, error.error)
+                } else {
+                }
+
+            }
+            // if(res===)
             // alert(JSON.stringify(values))
             formik.resetForm()
         }
 
 
     })
-    const isLoggedIn=useSelector<AppRootStateType,boolean>(state => state.auth.isLoggedIn)
-    if(isLoggedIn){
-        return <Redirect to={'/'}/>
+    const isLoggedIn = useSelector<AppRootStateType, boolean>(state => state.auth.isLoggedIn)
+    if (isLoggedIn) {
+        return <Redirect to={'/todolist'}/>
     }
 
     return <Grid container justify="center">

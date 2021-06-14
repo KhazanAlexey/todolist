@@ -27,7 +27,6 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
     const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
     const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
     const dispatch = useDispatch()
-
     useEffect(() => {
         if (demo||!isLoggedIn) {
             return;
@@ -36,8 +35,8 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
         dispatch(thunk)
     }, [])
 
-    const removeTask = useCallback(function (id: string, todolistId: string) {
-        const thunk = removeTaskTC(id, todolistId)
+    const removeTask = useCallback(function (taskId: string, todolistId: string) {
+        const thunk = removeTaskTC({taskId, todolistId})
         dispatch(thunk)
     }, [])
 
@@ -84,7 +83,7 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
 
     return <>
         <Grid container style={{padding: '20px'}}>
-            <AddItemForm addItem={addTodolist}/>
+          <AddItemForm addItem={addTodolist}/>
         </Grid>
         <Grid container spacing={3}>
             {
